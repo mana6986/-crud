@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test1.mapper.UserMapper">
+
+<resultMap id="UserResultMap" type="com.example.test1.model.User">
+    <id property="email" column="email"/>
+    <result property="password" column="password"/>
+</resultMap>
+    <!-- user_insert.xml -->
+<insert id="insertUser" parameterType="com.example.test1.model.User">
+    INSERT INTO T_USER (name, email, password, phone, address, address_detail, postal_code, note)
+    VALUES (#{name, jdbcType=VARCHAR}, #{email, jdbcType=VARCHAR}, #{password, jdbcType=VARCHAR}, #{phone, jdbcType=VARCHAR}, #{address, jdbcType=VARCHAR}, #{addressDetail, jdbcType=VARCHAR}, #{postalCode, jdbcType=VARCHAR}, #{note, jdbcType=VARCHAR})
+</insert>
+<select id="countByEmail" resultType="int">
+    SELECT COUNT(*) FROM T_USER WHERE email = #{email}
+</select>
+
+<select id="checkFields" resultType="int">
+    SELECT 
+        CASE
+            WHEN EXISTS (SELECT 1 FROM T_USER WHERE name = #{field} LIMIT 1) THEN 1
+            WHEN EXISTS (SELECT 1 FROM T_USER WHERE email = #{field} LIMIT 1) THEN 2
+            WHEN EXISTS (SELECT 1 FROM T_USER WHERE phone = #{field} LIMIT 1) THEN 3
+            ELSE 0
+        END AS result
+</select>
+<select id="getUserNameByEmail" resultType="java.lang.String">
+        SELECT NAME
+        FROM T_USER
+        WHERE EMAIL = #{email}
+    </select>
+<select id="findByEmailAndPassword" resultMap="UserResultMap">
+    SELECT * FROM users WHERE email = #{param1} AND password = #{param2}
+</select>
+<select id="getName" parameterType="String" resultType="String">
+    SELECT email FROM T_USER WHERE email = #{email}
+</select>
+
+<select id="getIdPassCheck" parameterType="com.example.test1.model.User" resultType="int">
+    SELECT COUNT(*) FROM T_USER WHERE email = #{email} AND password = #{password}
+</select>
+
+
+ <select id="findByEmail" parameterType="String" resultType="com.example.test1.model.User">
+        SELECT * FROM T_USER WHERE email = #{email}
+    </select>
+ <select id="checkByName" resultType="int">
+        SELECT COUNT(*) FROM T_USER WHERE name = #{name}
+    </select>
+
+
+</mapper>

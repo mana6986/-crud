@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test1.mapper.BoardMapper">
+
+<resultMap id="BoardResultMap" type="com.example.test1.model.Board">
+    <result property="postNumber" column="POST_NUMBER"/>
+    <result property="title" column="title"/>
+    <result property="content" column="content"/>
+    <result property="email" column="email"/>
+</resultMap>
+
+<!-- insertPost 쿼리 수정 -->
+<insert id="insertPost" parameterType="com.example.test1.model.Board">
+    <!-- 시퀀스를 사용하여 POST_NUMBER 값을 자동으로 생성 -->
+    <selectKey keyProperty="postNumber" resultType="java.math.BigDecimal" order="BEFORE">
+        SELECT POST_NUMBER_SEQ.NEXTVAL FROM DUAL
+    </selectKey>
+    
+    <!-- 생성된 POST_NUMBER 값을 사용하여 보드 삽입 -->
+    INSERT INTO T_BOARD (POST_NUMBER, EMAIL, TITLE, CONTENT, BOARD_DATE)
+    VALUES (#{postNumber}, #{email, jdbcType=VARCHAR}, #{title, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, TRUNC(SYSDATE))
+</insert>
+
+<!-- insertFile 쿼리 수정 -->
+<insert id="insertFile"  parameterType="com.example.test1.model.Board">
+    INSERT INTO T_FILE (POST_NUMBER, FILENAME)
+     VALUES (#{postNumber, jdbcType=INTEGER}, #{filename, jdbcType=VARCHAR})
+</insert>
+
+ <select id="getFileNamesByPostNumber" resultType="com.example.test1.model.Board">
+        SELECT *
+        FROM T_FILE
+        WHERE post_number = #{postNumber}
+    </select>
+<select id="getFileNameByPostNumber" resultType="String" parameterType="java.math.BigDecimal">
+    SELECT FILENAME
+    FROM T_FILE
+    WHERE POST_NUMBER = #{postNumber}
+</select>
+
+    <select id="getPostNumberByTitleAndEmail" resultType="java.math.BigDecimal" parameterType="java.util.Map">
+        SELECT POST_NUMBER
+        FROM T_BOARD
+        WHERE TITLE = #{title} AND EMAIL = #{email}
+    </select>
+
+<select id="selectFileByPostNumber" resultType="com.example.test1.model.Board">
+    SELECT * FROM T_FILE WHERE POST_NUMBER = #{postNumber}
+</select>
+
+<select id="getFileByPostNumber" parameterType="int" resultType="com.example.test1.model.Board">
+    <!-- 해당 게시글에 첨부된 파일 정보 조회 -->
+    SELECT * FROM T_FILE WHERE POST_NUMBER = #{postNumber, jdbcType=INTEGER}
+</select>
+
+
+<select id="getAllBoards" resultType="com.example.test1.model.Board">
+    SELECT *
+    FROM T_BOARD
+</select>
+
+ <select id="getBoardByPostNumber" parameterType="java.math.BigDecimal" resultType="com.example.test1.model.Board">
+        SELECT * FROM T_BOARD WHERE POST_NUMBER = #{postNumber}
+    </select>
+<delete id="deleteBoardByPostNumber">
+        DELETE FROM T_BOARD WHERE post_number = #{postNumber}
+    </delete>
+	
+
+    <delete id="deleteBoardByPostNumberAndUserEmail">
+        DELETE FROM T_BOARD WHERE post_number = #{postNumber} AND email = #{userEmail}
+    </delete>
+    
+    <update id="updateBoard" parameterType="com.example.test1.model.Board">
+    UPDATE T_BOARD
+    SET title = #{title}, content = #{content}  <!-- 필요한 필드를 여기에 추가하세요 -->
+    WHERE post_number = #{postNumber}
+  </update>
+ 
+  
+   <delete id="deleteBoardAndComments" parameterType="java.math.BigDecimal">
+        DELETE FROM board WHERE post_number = #{postNumber}
+        DELETE FROM comment WHERE post_number = #{postNumber}
+    </delete>
+    
+    <delete id="deleteCommentsByPostNumber" parameterType="java.math.BigDecimal">
+        DELETE FROM T_BOARD WHERE post_number = #{postNumber}
+    </delete>
+  <!-- 댓글 -->
+  
+  
+<select id="getCommentsByPostNumber" parameterType="BigDecimal" resultType="com.example.test1.model.Comment">
+    SELECT * FROM T_BOARD WHERE POST_NUMBER = #{postNumber} AND COMM_NO IS NOT NULL
+</select>
+
+ <insert id="writeAndGetPostNumber" parameterType="com.example.test1.model.Board">
+    <selectKey keyProperty="postNumber" order="BEFORE">
+        SELECT SEQ_POST_NUMBER.NEXTVAL FROM DUAL
+    </selectKey>
+    INSERT INTO T_BOARD (post_number, email, title, content) 
+    VALUES (#{postNumber, jdbcType=INTEGER}, #{email, jdbcType=VARCHAR}, #{title, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR})
+</insert>
+
+
+    <insert id="addComment" parameterType="Board">
+        INSERT INTO T_BOARD (POST_NUMBER, EMAIL, COMM_TEXT, COMM_NO, PARENT_COMM_NO)
+        VALUES (#{postNumber}, #{email}, #{commText}, #{commNo}, #{parentCommNo})
+    </insert>
+    
+    
+  <insert id="insertFileWithPostNumber" parameterType="com.example.test1.model.Board">
+        INSERT INTO T_FILE (post_number, file_name) VALUES (#{postNumber}, #{filename})
+    </insert>
+
+    <delete id="deleteBoard" parameterType="java.math.BigDecimal">
+        DELETE FROM T_BOARD WHERE post_number = #{postNumber}
+    </delete>
+<!-- 전체 게시글 수 조회 -->
+<select id="getTotalBoards" resultType="java.lang.Integer">
+    SELECT COUNT(*) FROM T_BOARD
+</select>
+
+
+
+<select id="getBoards" parameterType="map" resultType="com.example.test1.model.Board">
+    <![CDATA[
+    SELECT * FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY post_number DESC) AS rnum, t.*
+        FROM T_BOARD t
+    ) tmp
+    WHERE rnum BETWEEN #{start} AND #{end}
+    ]]>
+</select>
+
+
+
+      
+
+
+</mapper>

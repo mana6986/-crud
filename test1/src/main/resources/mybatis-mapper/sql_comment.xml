@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test1.mapper.CommentMapper">
+  
+<insert id="insertComment" parameterType="com.example.test1.model.Comment">
+    INSERT INTO T_COMMENT (comment_id, parent_comment_id, post_number, email, content)
+    VALUES (#{commentId, jdbcType=DECIMAL}, #{parentCommentId, jdbcType=DECIMAL}, #{postNumber, jdbcType=DECIMAL}, #{email, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR})
+</insert>
+
+
+<select id="selectComment" resultType="com.example.test1.model.Comment">
+    SELECT * FROM T_COMMENT WHERE COMMENT_ID = #{commentId, jdbcType=DECIMAL}
+</select>
+
+    <select id="selectAllComments" resultType="com.example.test1.model.Comment">
+    SELECT * FROM T_COMMENT
+</select>
+
+<update id="updateComment" parameterType="com.example.test1.model.Comment">
+    UPDATE T_COMMENT
+    SET content = #{content}
+    WHERE comment_id = #{commentId}
+</update>
+
+    <select id="selectComments" parameterType="java.math.BigDecimal" resultType="com.example.test1.model.Comment">
+    SELECT *
+    FROM T_COMMENT
+    WHERE post_number = #{post_number}
+</select>
+    <!-- 댓글 삭제 -->
+    <delete id="deleteComment" parameterType="java.math.BigDecimal">
+        DELETE FROM T_COMMENT
+        WHERE comment_id = #{commentId}
+    </delete>
+ <select id="getCommentCountByPostNumber" resultType="int">
+        SELECT COUNT(*)
+        FROM T_COMMENT
+        WHERE post_number = #{postNumber}
+    </select>
+<select id="retrieveCommentsByPostNumber" resultType="com.example.test1.model.Comment">
+    SELECT * FROM T_COMMENT WHERE POST_NUMBER = #{postNumber, jdbcType=INTEGER}
+</select>
+ 
+    <delete id="deleteCommentsByPostNumber" parameterType="java.math.BigDecimal">
+    DELETE FROM comments WHERE post_number = #{postNumber}
+</delete>
+   <!--  <insert id="insertReply" parameterType="com.example.test1.model.Comment">
+        INSERT INTO T_COMMENT (comment_id, parent_comment_id, post_number, email, content, created_at, updated_at)
+        VALUES (#{comment_id, jdbcType=INTEGER}, #{parent_comment_id, jdbcType=INTEGER}, #{post_number, jdbcType=INTEGER}, #{email, jdbcType=VARCHAR}, #{content, jdbcType=VARCHAR}, #{created_at, jdbcType=DATE}, #{updated_at, jdbcType=DATE})
+    </insert>
+    <select id="selectReplies" resultType="com.example.test1.model.Comment">
+        SELECT * FROM T_COMMENT WHERE parent_comment_id = #{parentCommentId, jdbcType=INTEGER}
+    </select> -->
+</mapper>

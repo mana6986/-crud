@@ -1,0 +1,134 @@
+function insertPost() {
+    	    // 게시물 정보를 가져옴
+    	    var title = document.getElementById("titleInput").value;
+    	    var content = document.getElementById("contentInput").value;
+    	    
+    	    // AJAX를 사용하여 서버로 데이터 전송
+    	    $.ajax({
+    	        type: "POST",
+    	        url: "/write", // 데이터를 처리할 서버 엔드포인트 URL
+    	        data: JSON.stringify({ title: title, content: content }), // 게시물 정보를 JSON 형식으로 전달
+    	        contentType: "application/json",
+    	        success: function(response) {
+    	            // 처리 결과에 따라 적절한 동작 수행
+    	            console.log("게시물이 성공적으로 저장되었습니다.");
+    	            window.location.href = "/tables"; // 성공 시 게시판 페이지로 이동
+    	        },
+    	        error: function(xhr, status, error) {
+    	            // 오류 발생 시 적절한 처리 수행
+    	            console.error("게시물 저장 중 오류가 발생하였습니다.");
+    	            console.error(xhr.responseText);
+    	        }
+    	    });
+    	}
+
+   private static final String UPLOAD_DIR = "C:/Users/joon/Downloads/spring1 (2)/test1/src/main/webapp/board_file/";
+
+
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+    <%
+    // 로그인 여부를 확인
+    boolean isLoggedIn = false;
+    Object user = session.getAttribute("user");
+    if (user != null) {
+        isLoggedIn = true;
+    }
+%>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+
+    <title>Tables</title>
+
+          <!-- Begin Page Content -->
+         <div class="container-fluid h-100">
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">게시판</h1>
+
+    <!-- DataTales Example -->
+   <!-- DataTales Example -->
+<div class="card shadow mb-4 h-75">
+    <div class="card-body">
+        <!-- Basic Card Example -->
+        <form action="#" method="post" enctype="multipart/form-data" class="h-100">
+            <div class="card shadow mb-4 h-100">
+                <div class="card-header py-3">
+                    <div class="col-sm-11 float-left">
+                        <input
+                            type="text"
+                            id="titleInput"
+                            class="form-control"
+                            placeholder="제목"
+                        />
+                    </div>
+                    <button
+                        type="button"
+                        class="btn btn-primary btn float-right ml-1"
+                        onclick="insertPost()"
+                    >
+                        작성완료
+                    </button>
+                </div>
+                <div class="card-body h-100">
+                    <textarea
+                        id="contentInput"
+                        cols="30"
+                        class="form-control h-100"
+                        placeholder="내용"
+                        style="resize: none"
+                    ></textarea>
+                  
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+	
+     
+     
+    
+
+     function insertPost() {
+ 	    // 게시물 정보를 가져옴
+ 	    var title = document.getElementById("titleInput").value;
+ 	    var content = document.getElementById("contentInput").value;
+ 	    
+ 	    // AJAX를 사용하여 서버로 데이터 전송
+ 	    $.ajax({
+ 	        type: "POST",
+ 	        url: "/write", // 데이터를 처리할 서버 엔드포인트 URL
+ 	        data: JSON.stringify({ title: title, content: content }), // 게시물 정보를 JSON 형식으로 전달
+ 	        contentType: "application/json",
+ 	        success: function(response) {
+ 	            // 처리 결과에 따라 적절한 동작 수행
+ 	            console.log("게시물이 성공적으로 저장되었습니다.");
+ 	            window.location.href = "/tables"; // 성공 시 게시판 페이지로 이동
+ 	        },
+ 	        error: function(xhr, status, error) {
+ 	            // 오류 발생 시 적절한 처리 수행
+ 	            console.error("게시물 저장 중 오류가 발생하였습니다.");
+ 	            console.error(xhr.responseText);
+ 	        }
+ 	    });
+ 	}
+   
+    	</script>
+
+  </body>
+</html>
+
+게시글작성하는 페이지인데 여기에 파일업로드 기능을 추가해주고싶어
+참고로 파일업로드 db의 테이블이름은 T_FILE 이고 칼럼들은 POST_NUMBER, FILE_NO, FILENAME으로 POST_NUMBER는 T_BOARD의 FK값이고 FILE_NO는 자동으로 하나씩 늘어나는 값이야 FILENAME에는 파일주소를 담아줄거야

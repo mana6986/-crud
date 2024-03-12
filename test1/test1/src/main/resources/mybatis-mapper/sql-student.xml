@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.test1.mapper.StudentMapper">
+	<select id="selectStudentList" parameterType="hashmap" resultType="com.example.test1.model.Student">
+		SELECT
+			STU_NO,
+			STU_NAME,
+			STU_DEPT,
+			STU_GRADE,
+			STU_CLASS,
+			STU_GENDER,
+			STU_HEIGHT,
+			STU_WEIGHT
+		FROM STUDENT
+	</select>
+</mapper>
