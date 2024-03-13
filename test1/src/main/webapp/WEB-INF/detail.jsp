@@ -72,68 +72,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">
       <!-- Sidebar -->
-         <!-- Sidebar -->
-      <ul
-        class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"
-        id="accordionSidebar"
-      >
-        <!-- Sidebar - Brand -->
-        <a
-          class="sidebar-brand d-flex align-items-center justify-content-center"
-          href="tables"
-        >
-          <div class="sidebar-brand-icon rotate-n-15">
-            <i class="fas fa-laugh-wink"></i>
-          </div>
-          <div class="sidebar-brand-text mx-3">게시판</div>
-        </a>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider my-0" />
-
-        <!-- Nav Item - Pages Collapse Menu -->
-        <li class="nav-item">
-          <a
-            class="nav-link collapsed"
-            href="#"
-            data-toggle="collapse"
-            data-target="#collapsePages"
-            aria-expanded="true"
-            aria-controls="collapsePages"
-          >
-            <i class="fas fa-fw fa-folder"></i>
-            <span>Pages</span>
-          </a>
-          <div
-            id="collapsePages"
-            class="collapse"
-            aria-labelledby="headingPages"
-            data-parent="#accordionSidebar"
-          >
-            <div class="bg-white py-2 collapse-inner rounded">
-              <h6 class="collapse-header">Login Screens:</h6>
-              <a class="collapse-item"  id="loginCollapseLink">Login</a>
-              <a class="collapse-item" href="membership">membership</a>
-            </div>
-          </div>
-        </li>
-
-        <!-- Nav Item - Tables -->
-        <li class="nav-item active">
-          <a class="nav-link" href="tables">
-            <i class="fas fa-fw fa-table"></i>
-            <span>Tables</span>
-          </a>
-        </li>
-
-        <!-- Divider -->
-        <hr class="sidebar-divider d-none d-md-block" />
-
-        <!-- Sidebar Toggler (Sidebar) -->
-        <div class="text-center d-none d-md-inline">
-          <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div>
-      </ul>
+        <%@ include file="sidebar.jsp" %>
       <!-- End of Sidebar -->
 
       <!-- Content Wrapper -->
@@ -141,66 +80,7 @@
         <!-- Main Content -->
         <div id="content">
            <!-- Topbar -->
-          <nav
-            class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow"
-          >
-            <!-- Sidebar Toggle (Topbar) -->
-            <form class="form-inline">
-              <button
-                id="sidebarToggleTop"
-                class="btn btn-link d-md-none rounded-circle mr-3"
-              >
-                <i class="fa fa-bars"></i>
-              </button>
-            </form>
-
-            <!-- Topbar Navbar -->
-            <ul class="navbar-nav ml-auto">
-              <div class="topbar-divider d-none d-sm-block"></div>
-
-              <!-- Nav Item - User Information -->
-              <li class="nav-item dropdown no-arrow">
-                <a
-                  class="nav-link dropdown-toggle"
-                  href="#"
-                  id="userDropdown"
-                  role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
-                  aria-expanded="false"
-                >
-                  <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-			    <% if(isLoggedIn) { %>
-			        <%= ((com.example.test1.model.User)user).getName() %>
-			    <% } else { %>
-			        guest
-			    <% } %>
-			</span>
-                  <img
-                    class="img-profile rounded-circle"
-                    src="img/undraw_profile.svg"
-                  />
-                </a>
-                <!-- Dropdown - User Information -->
-                <div
-                  class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
-                  aria-labelledby="userDropdown"
-                >
-                  <a class="dropdown-item" href="profile">
-                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
-                    Profile
-                  </a>
-
-                  <div class="dropdown-divider"></div>
-                  <a id="loginDropdownLink" class="dropdown-item" href="#" 
-                     <% if (isLoggedIn) { %>data-toggle="modal" data-target="#logoutModal"<% } %>>
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
-                    <% if (isLoggedIn) { %>Logout<% } else { %>Login<% } %>
-                  </a>
-                </div>
-              </li>
-            </ul>
-          </nav>
+         	<%@ include file="header.jsp" %>       
 <!-- Begin Page Content -->
 <div class="container-fluid h-100">
     <h1 class="h3 mb-2 text-gray-800">${board.title}</h1>
@@ -314,9 +194,14 @@
 	
 	
 	$(document).ready(function() {
-	    var isLoggedIn = <%= session.getAttribute("user") != null ? "true" : "false" %>;
-	    var postNumber = "<%= board.getPostNumber() %>";
-	
+	    const postNumber = "<%= board.getPostNumber() %>";
+	    const isLoggedIn = <%= session.getAttribute("user") != null ? "true" : "false" %>;
+
+	    function init() {
+	        loadAndRenderComments();
+	        setupEventHandlers();
+	    }
+
 	    function loadAndRenderComments() {
 	        $.ajax({
 	            url: "/comments/" + postNumber, // 서버로부터 댓글 데이터를 조회하는 URL
@@ -325,28 +210,22 @@
 	                var $container = $('#commentSectionMain');
 	                $container.empty();
 	                
-	                // 임시 저장소 객체를 생성합니다.
 	                var commentsMap = {};
 	                
-	                // 최상위 댓글만을 담는 배열
 	                var topLevelComments = [];
 
-	                // 댓글을 ID를 키로 사용하여 저장소에 저장합니다.
 	                comments.forEach(function(comment) {
 	                    commentsMap[comment.commentId] = comment;
 	                    comment.replies = []; // 각 댓글에 대한 대댓글 컨테이너 초기화
 	                    if(comment.parentCommentId) {
-	                        // 대댓글이면 해당 부모의 replies에 추가
 	                        if(commentsMap[comment.parentCommentId]) {
 	                            commentsMap[comment.parentCommentId].replies.push(comment);
 	                        }
 	                    } else {
-	                        // 최상위 댓글이면 별도 배열에 추가
 	                        topLevelComments.push(comment);
 	                    }
 	                });
 
-	                // 최상위 댓글과 해당 댓글의 대댓글을 렌더링합니다.
 	                topLevelComments.forEach(function(comment) {
 	                    $container.append(createCommentHtml(comment));
 	                });
@@ -356,11 +235,33 @@
 	            }
 	        });
 	    }
-	 
+
+	    function renderComments(comments) {
+	        const $container = $('#commentSectionMain').empty();
+	        const commentsMap = {};
+	        
+	        comments.forEach(comment => {
+	            commentsMap[comment.commentId] = comment;
+	            comment.replies = [];
+	        });
+
+	        comments.forEach(comment => {
+	            if(comment.parentCommentId && commentsMap[comment.parentCommentId]) {
+	                commentsMap[comment.parentCommentId].replies.push(comment);
+	            }
+	        });
+
+	        comments.filter(comment => !comment.parentCommentId)
+	                .forEach(comment => $container.append(createCommentHtml(comment, isLoggedIn)));
+	    }
+
+	
+
+
+	   
 	    function createCommentHtml(comment) {
 	    	 var replyButtonHtml = <%= isLoggedIn %> ? '<button class="toggleReplyForm">답글</button>' +
 	 	            '<div class="replyFormContainer" style="display:none;">' +
-	 	            // 대댓글 작성 대상 정보를 위한 빈 div 추가
 	 	            '<input type="text" class="replyInput" placeholder="답글을 입력하세요">' +
 	 	            '<button type="button" class="submitReplyButton">답글 작성</button>' +
 	 	            '</div>' : '';
@@ -402,15 +303,74 @@
         $('.reply').each(function() {
             var parentCommentId = $(this).attr('data-parent-comment-id');
             if (parentCommentId) {
-                // 대댓글을 부모 댓글의 replies 컨테이너에 추가
                 $(this).appendTo($(`div[data-comment-id='${parentCommentId}'] > .replies`));
             }
         });
     }
 
 
+    function submitComment(content) {
+        ajaxRequest({
+            url: "/comments/" + postNumber,
+            method: "POST",
+            data: { content: content },
+            onSuccess: function() {
+                loadAndRenderComments();
+                $('#commentInputMain').val('');
+                alert('댓글이 성공적으로 작성되었습니다.');
+            },
+            onError: function(xhr, status, error) {
+                console.error("댓글 제출 중 오류 발생: ", error);
+            }
+        });
+    }
 
-   // 댓글 제출
+
+    function submitReply(postNumber, parentCommentId, content) {
+        console.log(postNumber, parentCommentId);
+        $.ajax({
+            url: "/comments/" + postNumber + "/" + parentCommentId,
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify({ content: content }),
+            success: function() {
+                console.log("Reply submitted successfully.");
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                console.error("Error submitting reply:", error);
+            }
+        });
+    };
+
+
+    $(document).on('click', '.submitReplyButton', function() {
+        var $commentContainer = $(this).closest('.comment, .reply');
+        var parentCommentId = $commentContainer.data('comment-id');
+        var replyContent = $(this).prev('.replyInput').val().trim();
+
+        if (replyContent && parentCommentId) {
+            ajaxRequest({
+                url: "/comments/" + postNumber + "/" + parentCommentId,
+                method: "POST",
+                data: { content: replyContent },
+                onSuccess: function(reply) {
+                    var replyHtml = createCommentHtml(reply);
+                    loadAndRenderComments();
+                    // Clear and hide the reply input field
+                    $(this).prev('.replyInput').val('').closest('.replyFormContainer').hide();
+                },
+                onError: function(xhr, status, error) {
+                    console.error("Error submitting reply:", error);
+                }
+            });
+        } else {
+            console.error("Missing reply content or undefined parentCommentId.");
+        }
+    });
+
+
+// 댓글 제출
 $("#submitCommentMain").click(function() {
     var commentContent = $('#commentInputMain').val().trim();
     if (!isLoggedIn) {
@@ -422,72 +382,7 @@ $("#submitCommentMain").click(function() {
     }
 });
 
-function submitComment(content) {
-    $.ajax({
-        url: "/comments/" + postNumber,
-        method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ content: content }),
-        success: function() {
-            loadAndRenderComments();
-            $('#commentInputMain').val(''); // 입력 필드 비우기
-            alert('댓글이 성공적으로 작성되었습니다.');
-        },
-        error: function(xhr, status, error) {
-            console.error("댓글 제출 중 오류 발생: ", error);
-        }
-    });
-}
 
-
-$(document).on('click', '.submitReplyButton', function() {
-    var $commentContainer = $(this).closest('.comment, .reply');
-    var parentCommentId = $commentContainer.data('comment-id'); // 올바른 부모 ID를 가져옴
-    var replyContent = $(this).prev('.replyInput').val().trim();
-
-    if (replyContent && parentCommentId) {
-        $.ajax({
-            url: "/comments/" + postNumber + "/" + parentCommentId,
-            method: "POST",
-            contentType: "application/json",
-            data: JSON.stringify({ content: replyContent }),
-            success: function(reply) {
-                // 대댓글 HTML 생성
-                var replyHtml = createCommentHtml(reply);
-
-                // 대댓글을 부모 댓글 바로 다음에 삽입
-    loadAndRenderComments();                // 대댓글 입력 필드 초기화 및 숨기기
-                $(this).prev('.replyInput').val('').closest('.replyFormContainer').hide();
-            },
-            error: function(xhr, status, error) {
-                console.error("Error submitting reply:", error);
-            }
-        });
-    } else {
-        console.error("Missing reply content or undefined parentCommentId.");
-    }
-});
-
-
-
-
-function submitReply(postNumber, parentCommentId, content) {
-    console.log(postNumber, parentCommentId);
-    $.ajax({
-        url: "/comments/" + postNumber + "/" + parentCommentId,
-        method: "POST",
-        contentType: "application/json",
-        data: JSON.stringify({ content: content }),
-        success: function() {
-            console.log("Reply submitted successfully.");
-            // 대댓글 제출 후 새로 고침
-            location.reload();
-        },
-        error: function(xhr, status, error) {
-            console.error("Error submitting reply:", error);
-        }
-    });
-};
 
 
 
@@ -510,62 +405,40 @@ function submitReply(postNumber, parentCommentId, content) {
 
     loadAndRenderComments();
     
-    $(document).on('click', '.editCommentButton', function() {
-        var commentId = $(this).closest('.comment, .reply').data('comment-id');
-        console.log(commentId); 
-        var newContent = prompt("댓글 내용을 수정하세요:");
-        if (newContent) {
-            updateComment(commentId, newContent);
+    function handleComment(action, commentId, newContent = null) {
+        let url = "";
+        let method = "";
+        let data = {};
+        let successMessage = "";
+        
+        if (action === "update") {
+            url = "/comments/update/" + commentId;
+            method = "PUT";
+            data = JSON.stringify({ content: newContent });
+            successMessage = "댓글이 수정되었습니다.";
+        } else if (action === "delete") {
+            url = "/comments/delete/" + commentId;
+            method = "DELETE";
+            successMessage = "댓글이 삭제되었습니다.";
+        } else {
+            console.error("Invalid action:", action);
+            return;
         }
-    });
 
-    $(document).on('click', '.deleteCommentButton', function() {
-        var commentId = $(this).closest('.comment, .reply').data('comment-id');
-        console.log(commentId); 
-        if (confirm("댓글을 삭제하시겠습니까?")) {
-            deleteComment(commentId);
-        }
-    });
-
-    function updateComment(commentId, content) {
         $.ajax({
-            url: "/comments/update/" + commentId,
-            method: "PUT",
+            url: url,
+            method: method,
             contentType: "application/json",
-            data: JSON.stringify({ content: content }),
+            data: data,
             success: function() {
-                alert("댓글이 수정되었습니다.");
+                alert(successMessage);
                 loadAndRenderComments();
             },
             error: function(xhr, status, error) {
-                alert("댓글 수정 중 오류가 발생했습니다: " + error);
+                alert(`댓글 ${action} 중 오류가 발생했습니다: ` + error);
             }
         });
     }
-
-    function deleteComment(commentId) {
-        $.ajax({
-            url: "/comments/delete/" + commentId,
-            method: "DELETE",
-            success: function() {
-                alert("댓글이 삭제되었습니다.");
-                loadAndRenderComments();
-            },
-            error: function(xhr, status, error) {
-                alert("댓글 삭제 중 오류가 발생했습니다: " + error);
-            }
-        });
-    }
-
- // 다운로드 버튼 클릭 이벤트 핸들러
-    document.getElementById("downloadButton").addEventListener("click", function() {
-       
-        var downloadPath = this.getAttribute("href");
-        console.log("다운로드 경로:", downloadPath);
-    });
-
-  
-
     $(document).on('click', '.btn-delete-board', function() {
         var postNumber = $(this).data('post-number');
 
@@ -584,57 +457,46 @@ function submitReply(postNumber, parentCommentId, content) {
         }
     });
 
+
+  
+    // 수정 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.editCommentButton', function() {
+        var commentId = $(this).closest('.comment, .reply').data('comment-id');
+        var newContent = prompt("댓글 내용을 수정하세요:");
+        if (newContent) {
+            handleComment("update", commentId, newContent);
+        }
+    });
+
+    // 삭제 버튼 클릭 이벤트 핸들러
+    $(document).on('click', '.deleteCommentButton', function() {
+        var commentId = $(this).closest('.comment, .reply').data('comment-id');
+        if (confirm("댓글을 삭제하시겠습니까?")) {
+            handleComment("delete", commentId);
+        }
+    });
+
+ // 다운로드 버튼 클릭 이벤트 핸들러
+    document.getElementById("downloadButton").addEventListener("click", function() {
+       
+        var downloadPath = this.getAttribute("href");
+        console.log("다운로드 경로:", downloadPath);
+    });
+
     
 });
-	$(document).ready(function() {
-	    var isLoggedIn = <%= isLoggedIn %>; // 서버 사이드에서 확인한 로그인 여부
-	    var loginDropdownLink = $('#loginDropdownLink');
-	    var loginCollapseLink = $('#loginCollapseLink');
-
-	    if (isLoggedIn) { // 로그인한 상태
-	        loginDropdownLink.text('로그아웃');
-	        loginCollapseLink.text('로그아웃');
-
-	        loginDropdownLink.on('click', function(event) {
-	            event.preventDefault(); // 링크 클릭 이벤트 취소
-	            confirmLogout(); // 로그아웃 확인 대화 상자 표시
-	        });
-	        loginCollapseLink.on('click', function() {
-	            var result = confirm('로그아웃 하시겠습니까?');
-	            if (result == true) {
-	                alert('로그아웃 되었습니다.'); // 로그아웃 처리 URL로 이동
-	                window.location.href = 'logout';
-	            } else {
-	                alert('로그아웃이 취소되었습니다.'); // 취소되었다는 메시지 출력
-	            }
-	        });
-
-	    } else { // 로그인하지 않은 상태
-	        loginDropdownLink.text('로그인');
-	        loginDropdownLink.attr('href', 'login');
-	        loginCollapseLink.text('로그인');
-	        loginCollapseLink.attr('href', 'login');
-	    }
-	    
-	    // 로그아웃 확인 대화 상자 표시 함수
-	    function confirmLogout() {
-	        var result = confirm('로그아웃 하시겠습니까?');
-	        if (result == true) {
-	            alert('로그아웃 되었습니다.'); // 로그아웃 처리 URL로 이동
-	            window.location.href = 'logout';
-	        } else {
-	            alert('로그아웃이 취소되었습니다.'); // 취소되었다는 메시지 출력
-	        }
-	    }
-
-	    $.get("/checkLoginStatus", function(data) {
-	        if (data.loggedIn) {
-	            $('.mr-2').text(data.user.name);
-	        }
+	
+// POST형식의 ajax
+	function ajaxRequest({ url, method, data, onSuccess, onError }) {
+	    $.ajax({
+	        url: url,
+	        method: method,
+	        contentType: "application/json",
+	        data: JSON.stringify(data),
+	        success: onSuccess,
+	        error: onError
 	    });
-	});
-
-
+	}
 
 
 </script>

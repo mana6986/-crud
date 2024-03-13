@@ -38,7 +38,7 @@ public class CommentController {
     }
 
     
-    
+    @PostMapping("/comments/{postNumber}")
     private Comment registerComment(int postNumber,
                                     Integer parentCommentId,
                                     Comment comment, HttpSession session) {
@@ -64,6 +64,20 @@ public class CommentController {
 
         return comment;
     }
+    @PostMapping("/{postNumber}")
+    public Comment registerCommentWithoutParent(@PathVariable int postNumber,
+    		@RequestBody Comment comment, HttpSession session) {
+    	return registerComment(postNumber, null, comment, session);
+    }
+    
+    @PostMapping("/{postNumber}/{parentCommentId}")
+    public Comment registerCommentWithParent(@PathVariable int postNumber,
+    		@PathVariable Integer parentCommentId,
+    		@RequestBody Comment comment, HttpSession session) {
+    	
+    	// registerComment 메서드를 호출하여 부모 댓글 ID를 사용하여 댓글 등록
+    	return registerComment(postNumber, parentCommentId, comment, session);
+    }
  
     @Autowired
     private UserService userService;
@@ -83,20 +97,6 @@ public class CommentController {
     }
 
     
-    @PostMapping("/{postNumber}")
-    public Comment registerCommentWithoutParent(@PathVariable int postNumber,
-                                                @RequestBody Comment comment, HttpSession session) {
-        return registerComment(postNumber, null, comment, session);
-    }
-
-    @PostMapping("/{postNumber}/{parentCommentId}")
-    public Comment registerCommentWithParent(@PathVariable int postNumber,
-                                             @PathVariable Integer parentCommentId,
-                                             @RequestBody Comment comment, HttpSession session) {
-
-        // registerComment 메서드를 호출하여 부모 댓글 ID를 사용하여 댓글 등록
-        return registerComment(postNumber, parentCommentId, comment, session);
-    }
 
 
     @GetMapping("/checkLoginStatus")
