@@ -5,6 +5,7 @@ import com.example.test1.model.Comment;
 import com.example.test1.model.User;
 import com.example.test1.dao.BoardService;
 import com.example.test1.dao.CommentService;
+import com.example.test1.dao.UserService;
 
 import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.slf4j.Logger;
@@ -60,7 +61,8 @@ public class BoardController {
     private CommentService commentService;
     @Autowired
     private BoardService boardService;
-
+    @Autowired
+    private UserService userService;
     private static final String UPLOAD_DIR = "C:/Users/joon/Downloads/spring1 (2)/test1/src/main/webapp/board_file/";
 
     @GetMapping("/download/{fileName}")
@@ -155,6 +157,10 @@ public class BoardController {
             BigDecimal postNumber = board.getPostNumber();
             int commentCount = commentService.getCommentCountByPostNumber(postNumber);
             board.setCommentCount(BigDecimal.valueOf(commentCount));
+
+            // 사용자 이름 설정
+            String name = userService.getUserNameByEmail(board.getEmail());
+            board.setName(name);
         }
 
         model.addAttribute("boardList", boards);
@@ -163,6 +169,7 @@ public class BoardController {
 
         return "tables";
     }
+    
     @GetMapping("/detail")
     public String showBoardDetail(@RequestParam("postNumber") BigDecimal postNumber, Model model) {
         Board board = boardService.getBoardByPostNumber(postNumber);

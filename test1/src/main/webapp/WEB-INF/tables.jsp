@@ -82,7 +82,7 @@
                 <!-- 게시글 목록 표시 -->
                 <c:forEach var="board" items="${boardList}">
 			    <tr>
-			        <td>${board.email}</td>
+			        <td>${board.name}</td>
 			        <td><a href="/detail?postNumber=${board.postNumber}">${board.title}</a></td>
 			        <td>${board.boardDate}</td>
 			        <td>${board.commentCount}</td> <!-- 댓글 카운트 표시 --> 
@@ -113,13 +113,7 @@
             </div>
             <!-- End of Main Content -->
             <!-- Footer -->
-            <footer class="sticky-footer bg-white">
-                <div class="container my-auto">
-                    <div class="copyright text-center my-auto">
-                        <span>Copyright &copy; Your Website 2020</span>
-                    </div>
-                </div>
-            </footer>
+             <%@ include file="footer.jsp" %>
             <!-- End of Footer -->
         </div>
         <!-- End of Content Wrapper -->

@@ -26,4 +26,5 @@ public interface UserMapper {
         User findByEmail(String email);
         // 다른 필요한 메서드들도 여기에 추가 가능합니다.
         String getUserNameByEmail(@Param("email") String email);
+        
     }

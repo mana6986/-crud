@@ -13,6 +13,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <script src="js/common.js"></script>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta
@@ -95,13 +96,7 @@
 		        <!-- End of Main Content -->
 		
 		        <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <span>풋터</span>
-            </div>
-          </div>
-        </footer>
+  <%@ include file="footer.jsp" %>
         <!-- End of Footer -->
       </div>
       <!-- End of Content Wrapper -->
@@ -140,7 +135,40 @@
      
     
 
-     function insertPost() {
+    function insertPost() {
+	    var title = document.getElementById("titleInput").value;
+	    var content = document.getElementById("contentInput").value;
+	    var file = document.getElementById('fileInput').files[0];
+
+	    var formData = new FormData();
+	    formData.append("title", title);
+	    formData.append("content", content);
+	    if (file) { // 파일이 선택되었는지 확인
+	        formData.append("file", file);
+	    }
+
+	    // 게시물 저장 전에 확인 창을 표시
+	    if (confirm("작성하시겠습니까?")) {
+	        // 공통 AJAX 함수를 사용하여 서버로 데이터 전송
+	        public_ajax("/write", "POST", formData,
+	            function(response) { // 성공 콜백
+	                console.log("게시물이 성공적으로 저장되었습니다.");
+	                alert("저장되었습니다.");
+	                window.location.href = "/tables";
+	            },
+	            function(xhr, status, error) { // 오류 콜백
+	                console.error("게시물 저장 중 오류가 발생하였습니다.", error);
+	                alert("게시물 저장 중 오류가 발생했습니다.");
+	            }
+	        );
+	    }
+	}
+    	    
+    	    
+     
+
+    	</script>
+ <!-- function insertPost() {
     	    var title = document.getElementById("titleInput").value;
     	    var content = document.getElementById("contentInput").value;
     	    var file = document.getElementById('fileInput').files[0];
@@ -150,29 +178,20 @@
     	    formData.append("content", content);
     	    formData.append("file", file);
 
-    	    // 게시물 저장 전에 확인 창을 표시하도록 수정
     	    if (confirm("작성하시겠습니까?")) {
-    	        // AJAX를 사용하여 서버로 데이터 전송
-    	        $.ajax({
-    	            type: "POST",
-    	            url: "/write",
-    	            data: formData,
-    	            contentType: false,
-    	            processData: false,
-    	            success: function(response) {
-    	                console.log("게시물이 성공적으로 저장되었습니다.");
-    	                alert("저장되었습니다."); // 저장 완료 시 알림 창 출력
-    	                window.location.href = "/tables";
-    	            },
-    	            error: function(xhr, status, error) {
-    	                console.error("게시물 저장 중 오류가 발생하였습니다.");
-    	                console.error(xhr.responseText);
-    	            }
-    	        });
-    	    }
-    	}
-
-    	</script>
-
+    	    	  public_ajax("/write/" , 'POST', data,
+    	      	        function(result, textStatus) {
+    	      	            loadAndRenderComments(); // 댓글을 다시 로드하고 렌더링
+    	      	            console.log("게시물이 성공적으로 저장되었습니다.", result);
+    	      	            alert("저장되었습니다.");
+    	      	            window.location.href = "/tables";
+    	      	        },
+    	      	        function(xhr, textStatus, errorThrown) {
+    	      	        	 console.error("게시물 저장 중 오류가 발생하였습니다.");
+    	   	                console.error(xhr.responseText);
+    	      	        }
+    	      	    );
+    	      	}
+    	} -->
   </body>
 </html>

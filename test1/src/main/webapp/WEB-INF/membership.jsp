@@ -9,13 +9,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
+<script src="js/common.js"></script>
     <title>회원가입</title>
 
     <!-- Custom fonts for this template-->
     <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.min.css" rel="stylesheet">
     <style>
@@ -306,29 +305,19 @@ function register() {
         note: note
     };
 
-    fetch('/register', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data)
-    })
-       .then(response => {
-    	   if (!response.ok) {
-    		    throw new Error('네트워크 응답이 올바르지 않습니다.');
-    		}
-
-    		return response.json();
-    		})
-    		.then(responseData => {
-    		    console.log('Success:', responseData);
-    		    confirm("가입하시겠습니까?.");
-    		    window.location.href = "login";
-    		})
-    		.catch((error) => {
-    		    console.error('Error:', error);
-    		    alert("데이터 전송 중 오류가 발생했습니다.");
-    		});
+    public_ajax('/register', 'POST', data,
+            function(responseData) { // 성공 콜백 함수
+                console.log('Success:', responseData);
+                if (confirm("가입하시겠습니까?")) {
+                    window.location.href = "login";
+                }
+            },
+            function(xhr, textStatus, errorThrown) { // 오류 콜백 함수
+                console.error('Error:', errorThrown);
+                alert("데이터 전송 중 오류가 발생했습니다.");
+                registerBtn.disabled = false; // 오류가 발생했을 때 버튼을 다시 활성화
+            }
+        );
 }            
   
 
@@ -350,48 +339,70 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
 
-    // 중복 체크 버튼 클릭 여부를 추적하는 변수
-    var isCheckButtonClicked = false;
+   // 중복 체크 버튼 클릭 여부를 추적하는 변수
+   var isCheckButtonClicked = false;
 
-    window.checkEmail = function() {
-        isCheckButtonClicked = true;
-        mailMessageElement.textContent = "";
-        var email = emailField.value;
-        emailField.blur();
-        // 이메일 형식을 확인하는 정규표현식
-        var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+window.checkEmail = function() {
+    isCheckButtonClicked = true;
+    var mailMessageElement = document.getElementById('mailMessage'); // 메일 메시지를 표시할 요소의 ID를 가정함
+    var emailField = document.getElementById('email'); // 이메일 필드의 ID가 'email'이라고 가정함
+    mailMessageElement.textContent = "";
+    var email = emailField.value;
+    emailField.blur();
+    
+    // 이메일 형식을 확인하는 정규표현식
+    var emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-        // 이메일 주소의 형식을 검사
-        if (!emailRegex.test(email)) {
-            alert('올바른 이메일 형식이 아닙니다.');
-            return;
-        }
-
-        // 이메일이 형식에 맞는 경우 서버로 중복 확인 요청
-        fetch('/checkEmail?email=' + encodeURIComponent(email))
-            .then(function(response) {
-                if (!response.ok) {
-                    throw new Error('서버 응답이 실패했습니다.');
-                }
-                return response.text();
-            })
-            .then(function(data) {
-                if (data === 'duplicate') {
-                    alert('중복된 이메일입니다.');
-                } else {
-                    alert('사용 가능한 이메일입니다.');
-                    // 중복 확인이 완료되면 Register 버튼을 활성화하고 이메일 필드를 비활성화
-                    document.getElementById('registerBtn').disabled = false;
-                    emailField.disabled = true;
-                }
-            })
-            .catch(function(error) {
-                console.error('오류 발생:', error);
-                alert('서버 응답이 실패했습니다.');
-            });
+    // 이메일 주소의 형식을 검사
+    if (!emailRegex.test(email)) {
+        alert('올바른 이메일 형식이 아닙니다.');
+        return;
     }
+
+    // 이메일이 형식에 맞는 경우 서버로 중복 확인 요청
+    var url = '/checkEmail?email=' + encodeURIComponent(email);
+
+    public_ajax(url, 'GET', null, 
+        function(data) { // 성공 콜백 함수
+            // 서버 응답을 올바르게 처리하기 위해 result 처리 방식을 확인해야 합니다.
+            // 예제에서는 서버 응답이 단순 문자열 'duplicate' 또는 그렇지 않은 경우를 가정합니다.
+            if (data === 'duplicate') {
+                alert('중복된 이메일입니다.');
+                document.getElementById('registerBtn').disabled = true; // 버튼 비활성화
+                emailField.disabled = false; // 이메일 필드 활성화 유지
+            } else {
+                alert('사용 가능한 이메일입니다.');
+                document.getElementById('registerBtn').disabled = false; // 버튼 활성화
+                emailField.disabled = true; // 이메일 필드 비활성화
+            }
+        },
+        function(xhr, textStatus, errorThrown) { // 오류 콜백 함수
+            console.error('오류 발생:', textStatus + ": " + errorThrown);
+            alert('서버 응답이 실패했습니다.');
+        }
+    );
+};
 });
 
+/* // 이메일이 형식에 맞는 경우 서버로 중복 확인 요청
+public_ajax(url, 'GET', {}, // GET 요청이므로 data는 비워둠
+        function(data) { // 성공 콜백 함수
+            if (data === 'duplicate') {
+                alert('중복된 이메일입니다.');
+                document.getElementById('registerBtn').disabled = true; // 버튼 비활성화
+                document.getElementById('email').disabled = false; // 이메일 필드 활성화 유지
+            } else {
+                alert('사용 가능한 이메일입니다.');
+                document.getElementById('registerBtn').disabled = false; // 버튼 활성화
+                document.getElementById('email').disabled = true; // 이메일 필드 비활성화
+            }
+        },
+        function(xhr, textStatus, errorThrown) { // 오류 콜백 함수
+            console.error('오류 발생:', errorThrown);
+            alert('서버 응답이 실패했습니다.');
+        }
+    );
+ */
 
 </script>
 

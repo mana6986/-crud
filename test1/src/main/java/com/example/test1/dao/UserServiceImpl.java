@@ -4,7 +4,8 @@ import com.example.test1.mapper.UserMapper;
 import com.example.test1.model.Board;
 import com.example.test1.model.Comment;
 import com.example.test1.model.User;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +58,8 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public String getUserNameByEmail(String email) {
-        return userMapper.getUserNameByEmail(email);
+        User user = userMapper.findByEmail(email);
+        return (user != null) ? user.getName() : null;
     }
 }
     

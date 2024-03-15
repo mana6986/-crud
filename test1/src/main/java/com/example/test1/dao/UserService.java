@@ -18,4 +18,5 @@ public interface UserService {
     User findByEmail(String email);
     boolean isNameUnique(String name);
     String getUserNameByEmail(String email);
+    
 }

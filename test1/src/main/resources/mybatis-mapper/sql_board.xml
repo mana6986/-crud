@@ -124,13 +124,17 @@
 
 <select id="getBoards" parameterType="map" resultType="com.example.test1.model.Board">
     <![CDATA[
-    SELECT * FROM (
+    SELECT tmp.*, u.name AS name
+    FROM (
         SELECT ROW_NUMBER() OVER (ORDER BY post_number DESC) AS rnum, t.*
         FROM T_BOARD t
     ) tmp
+    INNER JOIN T_USER u ON tmp.email = u.email
     WHERE rnum BETWEEN #{start} AND #{end}
+    ORDER BY tmp.post_number DESC
     ]]>
 </select>
+
 
 
 
