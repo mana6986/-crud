@@ -67,7 +67,6 @@ public class Board {
         this.email = email;
         this.title = title;
         this.content = content;
-        this.boardDate = boardDate;
     }
     public Board(String email, String title, String content, Date boardDate) {
         this.email = email;

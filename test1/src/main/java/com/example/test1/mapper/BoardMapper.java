@@ -39,4 +39,7 @@ public interface BoardMapper {
     void insertFileWithPostNumber(BigDecimal postNumber, String fileName);
     BigDecimal writeAndGetPostNumber(Board board); 
     void insertBoard(Board board);
+    List<Board> getBoardsWithUserInformation(Map<String, Integer> parameterMap);
+    List<Board> selectBoardsWithCommentsAndUserInfo(Map<String, Integer> parameterMap);
+    void updateCommentCount(@Param("postNumber") BigDecimal postNumber, @Param("increment") int increment);
     }

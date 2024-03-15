@@ -113,9 +113,10 @@
                         
                     <% } %>
                 </div>
-                <div class="card-body navbar-nav-scroll" style="height: 290px !important">
-                    ${board.content}
-                </div>
+				    <div class="card-body navbar-nav-scroll" style="height: auto;">
+				    ${board.content}
+				</div>
+
                  <!-- File Download Button -->
 <%
     String fileName = (String) request.getAttribute("fileName");

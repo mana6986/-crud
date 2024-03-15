@@ -6,8 +6,10 @@ import com.example.test1.model.Board;
 import com.example.test1.model.User;
 import com.example.test1.model.Comment;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpSession;
 
@@ -51,12 +53,19 @@ public class BoardServiceImpl implements BoardService {
             boardMapper.insertFile(postNumber, filename);
         }
     }
- 
+    @Override
+    public void updateCommentCount(BigDecimal postNumber, int increment) {
+        boardMapper.updateCommentCount(postNumber, increment);
+    }
+    
     @Override
     public String getFileNameByPostNumber(BigDecimal postNumber) {
         return boardMapper.getFileNameByPostNumber(postNumber);
     }
-    
+    @Override
+    public List<Board> getBoardsWithUserInformation(Map<String, Integer> parameterMap) {
+        return boardMapper.getBoardsWithUserInformation(parameterMap);
+    }
     @Override
     public BigDecimal getPostNumber(Board board) {
         // 주어진 게시글 정보를 기반으로 데이터베이스에서 postNumber를 조회합니다.

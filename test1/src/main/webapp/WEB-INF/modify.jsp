@@ -90,13 +90,7 @@
         <!-- End of Main Content -->
 
         <!-- Footer -->
-        <footer class="sticky-footer bg-white">
-          <div class="container my-auto">
-            <div class="copyright text-center my-auto">
-              <span>풋터</span>
-            </div>
-          </div>
-        </footer>
+        <%@ include file="footer.jsp" %>
         <!-- End of Footer -->
       </div>
       <!-- End of Content Wrapper -->

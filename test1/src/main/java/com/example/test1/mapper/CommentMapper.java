@@ -2,6 +2,7 @@ package com.example.test1.mapper;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,5 +21,5 @@ public interface CommentMapper {
     List<Comment> selectReplies(BigDecimal parentCommentId);
     int getCommentCountByPostNumber(@Param("postNumber") BigDecimal postNumber);
     void deleteCommentsByPostNumber(BigDecimal postNumber);
-   
+    Map<BigDecimal, Integer> getCommentCountByPostNumbers(@Param("postNumbers") List<BigDecimal> postNumbers);
 }

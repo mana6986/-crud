@@ -49,8 +49,11 @@ import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 
 @Controller
@@ -97,8 +100,6 @@ public class BoardController {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             String userEmail = user.getEmail();
-            // 현재 시간을 boardDate로 설정
-            LocalDateTime boardDate = LocalDateTime.now();
             // 게시글 객체 생성
             Board board = new Board();
             board.setEmail(userEmail);
@@ -149,19 +150,13 @@ public class BoardController {
         int start = (page - 1) * pageSize + 1;
         int end = page * pageSize;
 
-        List<Board> boards = boardService.getBoards(start, end);
+        Map<String, Integer> parameterMap = new HashMap<>();
+        parameterMap.put("start", start);
+        parameterMap.put("end", end);
+
+        List<Board> boards = boardService.getBoardsWithUserInformation(parameterMap);
         int totalBoards = boardService.getTotalBoards();
         int totalPages = (int) Math.ceil((double) totalBoards / pageSize);
-
-        for (Board board : boards) {
-            BigDecimal postNumber = board.getPostNumber();
-            int commentCount = commentService.getCommentCountByPostNumber(postNumber);
-            board.setCommentCount(BigDecimal.valueOf(commentCount));
-
-            // 사용자 이름 설정
-            String name = userService.getUserNameByEmail(board.getEmail());
-            board.setName(name);
-        }
 
         model.addAttribute("boardList", boards);
         model.addAttribute("currentPage", page);
@@ -169,6 +164,10 @@ public class BoardController {
 
         return "tables";
     }
+
+
+
+    
     
     @GetMapping("/detail")
     public String showBoardDetail(@RequestParam("postNumber") BigDecimal postNumber, Model model) {

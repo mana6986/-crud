@@ -156,10 +156,7 @@
 	                alert("저장되었습니다.");
 	                window.location.href = "/tables";
 	            },
-	            function(xhr, status, error) { // 오류 콜백
-	                console.error("게시물 저장 중 오류가 발생하였습니다.", error);
-	                alert("게시물 저장 중 오류가 발생했습니다.");
-	            }
+	           
 	        );
 	    }
 	}

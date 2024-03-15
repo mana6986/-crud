@@ -6,7 +6,6 @@ function public_ajax(url, method, data, successCallback, errorCallback, options)
         processData: true,
         data: {},
         headers: {},
-        timeout: 0,
         beforeSend: function(xhr) {},
         complete: function(xhr, textStatus) {},
         ...options 
@@ -34,3 +33,4 @@ function public_ajax(url, method, data, successCallback, errorCallback, options)
         }
     });
 }
+

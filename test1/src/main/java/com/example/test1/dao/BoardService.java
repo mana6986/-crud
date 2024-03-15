@@ -35,4 +35,6 @@ public interface BoardService {
     void deleteBoard(BigDecimal postNumber);
     BigDecimal writeAndGetPostNumber(Board board);
 	 void deleteBoardAndComments(BigDecimal postNumber);
+	   List<Board> getBoardsWithUserInformation(Map<String, Integer> parameterMap);
+	   void updateCommentCount(BigDecimal postNumber, int increment);
 }

@@ -119,9 +119,34 @@
 <select id="getTotalBoards" resultType="java.lang.Integer">
     SELECT COUNT(*) FROM T_BOARD
 </select>
-
-
-
+ <select id="selectBoardsWithCommentsAndUserInfo" resultType="com.example.test1.model.Board">
+        SELECT
+            b.id,
+            b.title,
+            b.content,
+            u.name AS userName,
+            (SELECT COUNT(*) FROM comment WHERE comment.board_id = b.id) AS commentCount
+        FROM
+            board b
+            LEFT JOIN user u ON b.user_id = u.id
+        LIMIT #{start}, #{end}
+    </select>
+<select id="getBoardsWithUserInformation" resultType="com.example.test1.model.Board" parameterType="map">
+    <![CDATA[
+    SELECT tmp.*, u.name AS name
+    FROM (
+        SELECT ROW_NUMBER() OVER (ORDER BY post_number DESC) AS rnum, t.*
+        FROM T_BOARD t
+    ) tmp
+    INNER JOIN T_USER u ON tmp.email = u.email
+    WHERE rnum BETWEEN #{start} AND #{end}
+    ]]>
+</select>
+<update id="updateCommentCount">
+    UPDATE T_BOARD
+    SET COMMENT_COUNT = COMMENT_COUNT + #{increment}
+    WHERE POST_NUMBER = #{postNumber}
+</update>
 <select id="getBoards" parameterType="map" resultType="com.example.test1.model.Board">
     <![CDATA[
     SELECT tmp.*, u.name AS name
