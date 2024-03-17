@@ -162,11 +162,6 @@ public class UserController {
 		    }
 	
 		
-		   @RequestMapping("/detail") 
-		    public String detail(Model model) throws Exception{
-
-		        return "/detail";
-		    }
 	}
 
 	
