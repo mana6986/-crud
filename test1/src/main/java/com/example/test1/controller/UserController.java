@@ -145,6 +145,8 @@ public class UserController {
 	        
 	        return "/write";
 	    }
+		
+		
 		@GetMapping("/profileModify")
 	    public String profileModify(Model model) throws Exception{
 	        

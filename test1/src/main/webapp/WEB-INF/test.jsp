@@ -1,46 +1,63 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <head>
     <meta charset="UTF-8">
-    <title>댓글 시스템</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Header</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome CSS -->
+    <link href="fontawesome/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/header.css" rel="stylesheet">
 </head>
+
 <body>
+    <!-- Topbar -->
+    <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+        <!-- Sidebar Toggle (Topbar) -->
+        <form class="form-inline">
+            <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                <i class="fa fa-bars"></i>
+            </button>
+        </form>
+        <!-- Topbar Navbar -->
+        <ul class="navbar-nav ml-auto">
+            <div class="topbar-divider d-none d-sm-block"></div>
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">
+                        <c:if test="${not empty user}">
+                            <c:out value="${user.name}" />
+                        </c:if>
+                        <c:if test="${empty user}">
+                            guest
+                        </c:if>
+                    </span>
 
-<div id="commentsContainer"></div>
-
-<script>
-    // 서버로부터 받은 가정된 댓글 데이터
-    const comments = [
-        { id: 1, parentCommentId: null, author: '작성자1', content: '첫 번째 댓글입니다.' },
-        { id: 2, parentCommentId: 1, author: '작성자2', content: '첫 번째 댓글에 대한 대댓글입니다.' },
-        // 여기에 더 많은 댓글 데이터가 있을 수 있습니다.
-    ];
-
-    function renderComments(comments, containerId, parentId = null) {
-        const container = document.getElementById(containerId);
-        comments.forEach(comment => {
-            if (comment.parentCommentId === parentId) {
-                const commentDiv = document.createElement('div');
-                commentDiv.innerHTML = `
-                    <div>
-                        <p>${comment.author}</p>
-                        <p>${comment.content}</p>
-                    </div>
-                `;
-                container.appendChild(commentDiv);
-                
-                // 재귀적으로 대댓글 렌더링
-                const repliesContainer = document.createElement('div');
-                commentDiv.appendChild(repliesContainer);
-                renderComments(comments, repliesContainer, comment.id);
-            }
-        });
-    }
-
-    renderComments(comments, 'commentsContainer');
-</script>
-
+                    <img class="img-profile rounded-circle" src="img/undraw_profile.svg" />
+                </a>
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a class="dropdown-item" href="profile">
+                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
+                        Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                   
+                </div>
+            </li>
+        </ul>
+    </nav>
 </body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="module" src="/auth.js"></script>
+
+
 </html>

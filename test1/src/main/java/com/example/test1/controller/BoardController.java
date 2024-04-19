@@ -67,7 +67,7 @@ public class BoardController {
     @Autowired
     private UserService userService;
     private static final String UPLOAD_DIR = "C:/Users/joon/Downloads/spring1 (2)/test1/src/main/webapp/board_file/";
-
+    
     @GetMapping("/download/{fileName}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName) {
